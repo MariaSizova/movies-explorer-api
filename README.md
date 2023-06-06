@@ -9,13 +9,13 @@
 * <img src="https://github.com/devicons/devicon/blob/master/icons/mongodb/mongodb-original.svg" title="mongodb" alt="mongodb" width="20" height="20"/> MongoDB
 
 
-Адрес репозитория: https://github.com/Argayash1/movies-explorer-api
+Адрес репозитория: https://github.com/MariaSizova/movies-explorer-api
 
 ## Ссылки на проект
 
-IP 130.193.40.103
+IP 158.160.59.206
 
-Backend https://api.argayash-movies-explo.nomoredomains.rocks
+Backend 
 
 ## Запуск проекта
 

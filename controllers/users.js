@@ -2,8 +2,8 @@
 const { CastError, ValidationError } = require('mongoose').Error;
 
 // Импорт модулей bcryptjs и jsonwebtoken
-const bcrypt = require('bcryptjs'); // импортируем bcrypt
-const jwt = require('jsonwebtoken'); // импортируем модуль jsonwebtoken
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 // Импорт классов ошибок из конструкторов ошибок
 const NotFoundError = require('../errors/NotFoundError');
@@ -37,7 +37,7 @@ const getCurrentUserInfo = (req, res, next) => {
     .catch(next);
 };
 
-// Функция (контроллер) регистрации, которая создаёт пользователя
+// Функция регистрации, которая создаёт пользователя
 const createUser = (req, res, next) => {
   const { email, password, name } = req.body;
   // хешируем пароль
@@ -66,7 +66,7 @@ const createUser = (req, res, next) => {
     });
 };
 
-// Функция (контроллер) аутентификации
+// Функция аутентификации
 const login = (req, res, next) => {
   const { email, password } = req.body;
 

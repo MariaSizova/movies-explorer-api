@@ -1,7 +1,7 @@
 // Импорт роутеров
-const router = require('express').Router(); // импортируем роутер из express
-const users = require('./users'); // импортируем роутер users.js
-const movies = require('./movies'); // импортируем роутер movies.js
+const router = require('express').Router();
+const users = require('./users');
+const movies = require('./movies');
 
 // Импорт миддлвэра для авторизации
 const auth = require('../middlewares/auth');
