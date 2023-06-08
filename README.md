@@ -15,7 +15,7 @@
 
 IP 158.160.59.206
 
-Backend 
+Backend http://api.diplom.marisizova.nomoredomains.rocks/
 
 ## Запуск проекта
 
