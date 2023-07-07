@@ -39,7 +39,7 @@ const getCurrentUserInfo = (req, res, next) => {
 
 // Функция регистрации, которая создаёт пользователя
 const createUser = (req, res, next) => {
-  const { email, password, name } = req.body;
+  const { name, email, password } = req.body;
   // хешируем пароль
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
