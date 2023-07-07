@@ -2,8 +2,8 @@
 const { CastError, ValidationError } = require('mongoose').Error;
 
 // Импорт модулей bcryptjs и jsonwebtoken
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs'); // импортируем bcrypt
+const jwt = require('jsonwebtoken'); // импортируем модуль jsonwebtoken
 
 // Импорт классов ошибок из конструкторов ошибок
 const NotFoundError = require('../errors/NotFoundError');
@@ -37,11 +37,12 @@ const getCurrentUserInfo = (req, res, next) => {
     .catch(next);
 };
 
-// Функция регистрации, которая создаёт пользователя
+// Функция (контроллер) регистрации, которая создаёт пользователя
 const createUser = (req, res, next) => {
   const { name, email, password } = req.body;
   // хешируем пароль
-  bcrypt.hash(password, 10)
+  bcrypt
+    .hash(password, 10)
     .then((hash) => User.create({
       email,
       password: hash, // записываем хеш в базу
@@ -66,27 +67,26 @@ const createUser = (req, res, next) => {
     });
 };
 
-// Функция аутентификации
+// Функция (контроллер) аутентификации
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
   User.findUserByCredentials(email, password)
     .then((user) => {
       // создадим токен
-      const token = jwt.sign(
-        { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : JWT_SECRET_DEV,
-        { expiresIn: '7d' },
-      );
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : JWT_SECRET_DEV, {
+        expiresIn: '7d',
+      });
       // отправим токен, браузер сохранит его в куках
-      res.cookie('jwt', token, {
-        // token - наш JWT токен, который мы отправляем
-        maxAge: 3600000 * 24 * 7,
-        httpOnly: true,
-        sameSite: 'none',
-        secure: true,
-      })
-      // отправим токен пользователю
+      res
+        .cookie('jwt', token, {
+          // token - наш JWT токен, который мы отправляем
+          maxAge: 3600000 * 24 * 7,
+          httpOnly: true,
+          sameSite: 'none',
+          secure: true,
+        })
+        // отправим токен пользователю
         .send({ message: LOGIN_MESSAGE });
     })
     .catch(next);
