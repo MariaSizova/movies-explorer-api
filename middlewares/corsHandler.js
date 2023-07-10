@@ -6,6 +6,8 @@ const allowedCors = [
   'https://diplom.marisizova.nomoredomains.rocks/',
   'https://localhost:3000',
   'http://localhost:3000',
+  'http://158.160.107.188',
+  'https://158.160.107.188',
 ];
 
 const corsHandler = (req, res, next) => {
