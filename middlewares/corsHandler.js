@@ -1,8 +1,7 @@
 // Массив доменов, с которых разрешены кросс-доменные запросы
 const allowedCors = [
-  'https:api.diplom.marisizova.nomoredomains.rocks/',
-  'http:api.diplom.marisizova.nomoredomains.rocks/',
-  'https://api.diploma-project.nomoredomains.rocks/',
+  'https://api.diplom.marisizova.nomoredomains.rocks/',
+  'http://api.diplom.marisizova.nomoredomains.rocks/',
   'https://localhost:3000',
   'http://localhost:3000',
 ];
