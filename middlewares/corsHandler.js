@@ -4,6 +4,7 @@ const allowedCors = [
   'http://api.diplom.marisizova.nomoredomains.rocks',
   'http://diplom.marisizova.nomoredomains.rocks',
   'https://diplom.marisizova.nomoredomains.rocks',
+  'https://api.nomoreparties.co/beatfilm-movies',
   'https://localhost:3000',
   'http://localhost:3000',
   'http://158.160.107.188',
