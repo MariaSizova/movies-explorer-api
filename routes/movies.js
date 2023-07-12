@@ -1,14 +1,24 @@
-const moviesRouter = require('express').Router();
-const { validateDeleteMovie, validateCreateMovie } = require('../middlewares/validation');
+// Импорт роутера
+const router = require('express').Router();
 
+// Импорт контроллеров
 const {
-  createMovie, deleteMoviedByID, getMovies,
+  getMovies,
+  createMovie,
+  deleteMovieById,
 } = require('../controllers/movies');
 
-moviesRouter.get('/', getMovies);
+// Импорт валидаторов
+const {
+  movieDataValidator,
+  movieIdValidator,
+} = require('../middlewares/validators/movieValidator');
 
-moviesRouter.delete('/:movieDbId', validateDeleteMovie, deleteMoviedByID);
+// Роутеры
+router.get('/', getMovies);
 
-moviesRouter.post('/', validateCreateMovie, createMovie);
+router.post('/', movieDataValidator, createMovie);
 
-module.exports = moviesRouter;
+router.delete('/:_id', movieIdValidator, deleteMovieById);
+
+module.exports = router; // экспортировали этот роутер
