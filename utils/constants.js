@@ -18,14 +18,15 @@ const REG_EXP = /^https?:\/\/(www\.)?([a-z0-9_-]+)(\.[a-z0-9_-]+).+/i;
 
 // Массив доменов, с которых разрешены кросс-доменные запросы
 const ALLOWED_CORS = [
-  'http://burnovdiplom.nomoredomains.rocks',
-  'https://burnovdiplom.nomoredomains.rocks',
-  'http://localhost:3000',
+  'https://api.diplom.marisizova.nomoredomains.rocks',
+  'http://api.diplom.marisizova.nomoredomains.rocks',
+  'http://diplom.marisizova.nomoredomains.rocks',
+  'https://diplom.marisizova.nomoredomains.rocks',
+  'https://api.nomoreparties.co/beatfilm-movies',
   'https://localhost:3000',
-  'http://localhost:3001',
-  'https://localhost:3001',
-  'http://51.250.20.59',
-  'https://51.250.20.59',
+  'http://localhost:3000',
+  'http://158.160.107.188',
+  'https://158.160.107.188',
 ];
 
 // Значение для заголовка Access-Control-Allow-Methods по умолчанию (разрешены все типы запросов)
