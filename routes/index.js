@@ -1,30 +1,30 @@
-// Импорт роутеров
-const router = require('express').Router();
-const users = require('./users');
-const movies = require('./movies');
-
-// Импорт миддлвэра для авторизации
+const mainRouter = require('express').Router();
+const cookieParser = require('cookie-parser');
+const NotFoundError = require('../errors/not-found-err');
 const auth = require('../middlewares/auth');
 
-// Импорт кастомного класса ошибок NotFoundError
-const NotFoundError = require('../errors/NotFoundError');
+// Импорт роутеров
+const signup = require('./signup');
+const users = require('./users');
+const signin = require('./signin');
+const signout = require('./signout');
+const movies = require('./movies');
 
-// Импорт контроллеров и валидаторов
-const { createUser, login, logout } = require('../controllers/users');
-const { createUserValidator, loginValidator } = require('../middlewares/validators/userValidator');
+mainRouter.use(cookieParser()); // подключаем парсер кук как мидлвэр
 
-// роуты, не требующие авторизации - регистрация и логин
-router.post('/signup', createUserValidator, createUser); // добавили роутер для регистрации
-router.post('/signin', loginValidator, login); // добавили роутеры для авторизации
+// Роуты без авторизации
+mainRouter.use('/signup', signup);
+mainRouter.use('/signin', signin);
 
-// роуты, которым авторизация нужна - users и movies
-router.use('/users', auth, users); // добавили роутеры для пользователей
-router.use('/movies', auth, movies); // добавили роутеры для фильмов
-router.get('/signout', auth, logout); // добавили роутер для выхода из системы (очищения куки)
+mainRouter.use(auth); // Подключение авторизации
 
-// роут для запросов по несуществующим URL
-router.use('*', auth, (req, res, next) => {
-  next(new NotFoundError('Ресурс не найден. Проверьте URL и метод запроса'));
+// Роуты с авторизацией
+mainRouter.use('/users/me', users);
+mainRouter.use('/movies', movies);
+mainRouter.use('/signout', signout);
+
+mainRouter.use('*', (req, res, next) => {
+  next(new NotFoundError('Страница не найдена'));
 });
 
-module.exports = router; // экспортировали этот роутер
+module.exports = mainRouter;

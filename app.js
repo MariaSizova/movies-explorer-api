@@ -1,52 +1,38 @@
-// Импорт модуля dotenv для добавления переменных окружения в process.env
 require('dotenv').config();
-
-// Импорт npm-пакетов
 const express = require('express');
 const mongoose = require('mongoose');
-
-// Импорт миддлвэров
-const cookieParser = require('cookie-parser');
-const { errors } = require('celebrate');
 const helmet = require('helmet');
-const errorHandler = require('./middlewares/errorHandler');
-const limiter = require('./middlewares/limiter');
+const cors = require('cors');
+const corsOptions = require('./utils/corsOptions');
+const { limiter } = require('./middlewares/limiter');
+
+const { PORT, DATABASE } = require('./utils/config');
+const mainRouter = require('./routes/index');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const corsHandler = require('./middlewares/corsHandler');
-
-// Импорт роутера
-const router = require('./routes/index');
-
-const {
-  NODE_ENV, PORT, DB, DB_DEV,
-} = require('./utils/config');
+const mainErorHandler = require('./middlewares/mainErorHandler');
 
 const app = express();
 
-// подключаемся к серверу mongo
-mongoose.connect(NODE_ENV === 'production' ? DB : DB_DEV, {
+app.use(express.json());
+
+mongoose.connect(DATABASE, {
   useNewUrlParser: true,
 });
 
-// Миддлвэр для логирования запросов
-app.use(requestLogger); // подключаем логгер запросов
+app.use(requestLogger); // подключаем логгер запросов до всех обработчиков роутов и защит
 
-// Миддлвэры для безопасности (лимитер, хельмет и корс-обработчик)
 app.use(limiter);
 app.use(helmet());
-app.use(corsHandler);
+app.use(cors(corsOptions)); // Подключаем CORS
+app.options('*', cors()); // Подключаем CORS Pre-Flight
 
-// Миддлвэры для парсинга
-app.use(express.json()); // для собирания JSON-формата
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser()); // подключаем парсер кук как мидлвэр
+app.use('/', mainRouter); // подключаем главный роутер приложения
 
-// Роутер
-app.use(router);
+// обработчики ошибок
 
-// Миддлвэры для обработки ошибок
-app.use(errorLogger); // подключаем логгер ошибок
-app.use(errors()); // обработчик ошибок celebrate
-app.use(errorHandler); // централизолванная обработка ошибок
+app.use(errorLogger); // подключаем логгер ошибок после обработчиков роутов до обработчиков ошибок
+app.use(mainErorHandler); // централизованный обработчик ошибок
 
-app.listen(PORT);
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}!`);
+});
