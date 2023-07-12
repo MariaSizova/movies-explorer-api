@@ -1,56 +1,50 @@
-const httpConstants = require('http2').constants;
+// Коды ошибок
+const BAD_REQUEST_ERROR_CODE = 400;
+const AUTH_ERROR_CODE = 401;
+const FORBIDDEN_ERROR_CODE = 403;
+const NOT_FOUND_ERROR_CODE = 404;
+const CONFLICT_ERROR_CODE = 409;
 
-const {
-  HTTP_STATUS_CREATED: CREATED_201,
-  HTTP_STATUS_BAD_REQUEST: BAD_REQUEST_400,
-  HTTP_STATUS_UNAUTHORIZED: UNAUTHORIZED_401,
-  HTTP_STATUS_FORBIDDEN: FORBIDDEN_403,
-  HTTP_STATUS_NOT_FOUND: NOT_FOUND_404,
-  HTTP_STATUS_CONFLICT: CONFLICT_409,
-  HTTP_STATUS_INTERNAL_SERVER_ERROR: INTERNAL_SERVER_ERROR_500,
-} = httpConstants;
+// Сообщения ошибок
+const BAD_REQUEST_ERROR_MESSAGE = 'Некорректные данные при запросе';
+const AUTH_ERROR_MESSAGE = 'Проблемы с авторизацией';
+const AUTH_ERROR_LOGIN_MESSAGE = 'Неправильные почта или пароль';
+const FORBIDDEN_ERROR_MESSAGE = 'Отказано в доступе';
+const NOT_FOUND_ERROR_MESSAGE = 'Данные с таким ID не найдены';
+const CONFLICT_ERROR_MESSAGE = 'Email должен быть уникальным';
 
-const DUPLICATION_11000 = 11000;
+// Регулярное выражение для валидации URL
+const REG_EXP = /^https?:\/\/(www\.)?([a-z0-9_-]+)(\.[a-z0-9_-]+).+/i;
 
-const SERVER_ERROR_MESSAGE = 'На сервере произошла ошибка';
-const VALIDATION_ERROR_MESSAGE = 'Некорректные данные:';
-const UNAUTHORIZED_ERROR_MESSAGE = 'С токеном что-то не так';
+// Массив доменов, с которых разрешены кросс-доменные запросы
+const ALLOWED_CORS = [
+  'https://api.diplom.marisizova.nomoredomains.rocks',
+  'http://api.diplom.marisizova.nomoredomains.rocks',
+  'http://diplom.marisizova.nomoredomains.rocks',
+  'https://diplom.marisizova.nomoredomains.rocks',
+  'https://api.nomoreparties.co/beatfilm-movies',
+  'https://localhost:3000',
+  'http://localhost:3000',
+  'http://158.160.107.188',
+  'https://158.160.107.188',
+];
 
-const INCORRECT_USERDATA_MESSAGE = 'Неправильные почта или пароль';
-const CONFLICT_ERROR_MESSAGE = 'Пользователь с таким email уже зарегистрирован';
-const LOGIN_MESSAGE = 'Успешная авторизация';
-const LOGOUT_MESSAGE = 'Вы вышли из системы';
-const USER_NOT_FOUND_ERROR_MESSAGE = 'Такого пользователя нет';
-const CAST_INCORRECT_USERID_ERROR_MESSAGE = 'Некорректный Id пользователя';
-
-const FILM_NOT_FOUND_ERROR_MESSAGE = 'Такого фильма нет';
-const FORBIDDEN_ERROR_MESSAGE = 'Можно удалять только собственные фильмы';
-const DELETE_MOVIE_MESSAGE = 'Фильм удалён';
-const CAST_INCORRECT_MOVIEID_ERROR_MESSAGE = 'Некорректный Id фильма';
-
-const regEx = /https?:\/\/w{0,3}\.?[\w0-9-]{1,10}\.\w{2,3}[\w\d\-._~:/?#[\]@!$&'()*+,;=]{0,}/m;
+// Значение для заголовка Access-Control-Allow-Methods по умолчанию (разрешены все типы запросов)
+const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
 
 module.exports = {
-  CREATED_201,
-  BAD_REQUEST_400,
-  UNAUTHORIZED_401,
-  FORBIDDEN_403,
-  NOT_FOUND_404,
-  CONFLICT_409,
-  INTERNAL_SERVER_ERROR_500,
-  DUPLICATION_11000,
-  SERVER_ERROR_MESSAGE,
-  VALIDATION_ERROR_MESSAGE,
-  INCORRECT_USERDATA_MESSAGE,
-  UNAUTHORIZED_ERROR_MESSAGE,
-  CONFLICT_ERROR_MESSAGE,
-  LOGIN_MESSAGE,
-  LOGOUT_MESSAGE,
-  USER_NOT_FOUND_ERROR_MESSAGE,
-  CAST_INCORRECT_USERID_ERROR_MESSAGE,
-  FILM_NOT_FOUND_ERROR_MESSAGE,
+  BAD_REQUEST_ERROR_CODE,
+  AUTH_ERROR_CODE,
+  FORBIDDEN_ERROR_CODE,
+  NOT_FOUND_ERROR_CODE,
+  CONFLICT_ERROR_CODE,
+  BAD_REQUEST_ERROR_MESSAGE,
+  AUTH_ERROR_MESSAGE,
+  AUTH_ERROR_LOGIN_MESSAGE,
   FORBIDDEN_ERROR_MESSAGE,
-  DELETE_MOVIE_MESSAGE,
-  CAST_INCORRECT_MOVIEID_ERROR_MESSAGE,
-  regEx,
+  NOT_FOUND_ERROR_MESSAGE,
+  CONFLICT_ERROR_MESSAGE,
+  REG_EXP,
+  ALLOWED_CORS,
+  DEFAULT_ALLOWED_METHODS,
 };
