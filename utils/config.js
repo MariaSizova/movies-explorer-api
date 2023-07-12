@@ -1,9 +1,15 @@
 const {
-  PORT = 3000, JWT_SECRET, NODE_ENV, DATABASE = 'mongodb://127.0.0.1:27017/bitfilmsdb',
+  NODE_ENV, PORT = 3000, DB, JWT_SECRET,
 } = process.env;
 
-const SECRET_KEY = NODE_ENV === 'production' ? JWT_SECRET : 'super-strong-secret';
+const DB_DEV = 'mongodb://127.0.0.1:27017/bitfilmsdb';
+const JWT_SECRET_DEV = 'dev-key';
 
 module.exports = {
-  PORT, DATABASE, SECRET_KEY, NODE_ENV,
+  NODE_ENV,
+  PORT,
+  DB,
+  JWT_SECRET,
+  DB_DEV,
+  JWT_SECRET_DEV,
 };
