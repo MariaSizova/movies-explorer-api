@@ -1,7 +1,7 @@
 {
   "name": "movies-explorer-api",
   "version": "1.0.0",
-  "description": "My diploma",
+  "description": "diplom",
   "main": "app.js",
   "scripts": {
     "lint": "npx eslint .",
@@ -12,8 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/MariaSizova/movies-explorer-api.git"
   },
-  "keywords": [],
-  "author": "Mary Vasileva",
+  "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/MariaSizova/movies-explorer-api/issues"
@@ -24,21 +23,21 @@
     "celebrate": "^15.0.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-winston": "^4.2.0",
     "helmet": "^7.0.0",
-    "jsonwebtoken": "^9.0.0",
-    "mongoose": "^7.0.4",
+    "jsonwebtoken": "^9.0.1",
+    "mongoose": "^7.3.4",
     "node": "^20.4.0",
     "validator": "^13.9.0",
-    "winston": "^3.8.2"
+    "winston": "^3.10.0"
   },
   "devDependencies": {
     "body-parser": "^1.20.2",
-    "eslint": "^8.38.0",
+    "eslint": "^8.44.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.27.5",
-    "nodemon": "^2.0.22"
+    "nodemon": "^3.0.1"
   }
 }
