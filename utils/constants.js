@@ -18,8 +18,8 @@ const REG_EXP = /^https?:\/\/(www\.)?([a-z0-9_-]+)(\.[a-z0-9_-]+).+/i;
 
 // Массив доменов, с которых разрешены кросс-доменные запросы
 const ALLOWED_CORS = [
-  //'https://api.diplom.marisizova.nomoredomains.rocks',
-  //'http://api.diplom.marisizova.nomoredomains.rocks',
+  'https://api.diplom.marisizova.nomoredomains.rocks',
+  'http://api.diplom.marisizova.nomoredomains.rocks',
   'http://diplom.marisizova.nomoredomains.rocks',
   'https://diplom.marisizova.nomoredomains.rocks',
   'https://api.nomoreparties.co/beatfilm-movies',
