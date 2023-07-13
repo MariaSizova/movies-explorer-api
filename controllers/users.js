@@ -1,145 +1,98 @@
-// Импорт классов ошибок из mongoose.Error
-const { CastError, ValidationError } = require('mongoose').Error;
+require('dotenv').config();
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+const IncorrectValue = require('../utils/errors/IncorrectValue400');
+const Conflict = require('../utils/errors/Conflict409');
+const NotFound = require('../utils/errors/NotFound404');
+const { STATUS_CREATED_201 } = require('../utils/constants');
 
-// Импорт модулей bcryptjs и jsonwebtoken
-const bcrypt = require('bcryptjs'); // импортируем bcrypt
-const jwt = require('jsonwebtoken'); // импортируем модуль jsonwebtoken
+const { JWT_SECRET = 'some-secret-key' } = process.env;
 
-// Импорт классов ошибок из конструкторов ошибок
-const NotFoundError = require('../errors/NotFoundError');
-const BadRequestError = require('../errors/BadRequestError');
-const ConflictError = require('../errors/ConflictError');
-
-// Импорт модели user
-const User = require('../models/user'); // импортируем модель user
-
-// Импорт статус-кодов ошибок
-const {
-  CREATED_201,
-  DUPLICATION_11000,
-  VALIDATION_ERROR_MESSAGE,
-  CONFLICT_ERROR_MESSAGE,
-  LOGIN_MESSAGE,
-  LOGOUT_MESSAGE,
-  USER_NOT_FOUND_ERROR_MESSAGE,
-  CAST_INCORRECT_USERID_ERROR_MESSAGE,
-} = require('../utils/constants');
-
-// Импорт переменной секретного ключа
-const { NODE_ENV, JWT_SECRET, JWT_SECRET_DEV } = require('../utils/config');
-
-// Функция, которая возвращает информацию о пользователе (email и имя)
-const getCurrentUserInfo = (req, res, next) => {
+const getUserID = (req, res, next) => {
   const { _id: userId } = req.user;
-
   User.findById(userId)
-    .then((user) => res.send(user))
-    .catch(next);
-};
-
-// Функция (контроллер) регистрации, которая создаёт пользователя
-const createUser = (req, res, next) => {
-  const { name, email, password } = req.body;
-  // хешируем пароль
-  bcrypt
-    .hash(password, 10)
-    .then((hash) => User.create({
-      email,
-      password: hash, // записываем хеш в базу
-      name,
-    }))
-    // вернём записанные в базу данные
-    .then((user) => res.status(CREATED_201).send({ data: user }))
-    // данные не записались, вернём ошибку
-    .catch((err) => {
-      if (err.code === DUPLICATION_11000) {
-        next(new ConflictError(CONFLICT_ERROR_MESSAGE));
-        return;
-      }
-      if (err instanceof ValidationError) {
-        const errorMessage = Object.values(err.errors)
-          .map((error) => error.message)
-          .join(', ');
-        next(new BadRequestError(`${VALIDATION_ERROR_MESSAGE} ${errorMessage}`));
-      } else {
-        next(err);
-      }
-    });
-};
-
-// Функция (контроллер) аутентификации
-const login = (req, res, next) => {
-  const { email, password } = req.body;
-
-  User.findUserByCredentials(email, password)
-    .then((user) => {
-      // создадим токен
-      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : JWT_SECRET_DEV, {
-        expiresIn: '7d',
-      });
-      // отправим токен, браузер сохранит его в куках
-      res
-        .cookie('jwt', token, {
-          // token - наш JWT токен, который мы отправляем
-          maxAge: 3600000 * 24 * 7,
-          httpOnly: true,
-          sameSite: 'none',
-          secure: true,
-        })
-        // отправим токен пользователю
-        .send({ message: LOGIN_MESSAGE });
-    })
-    .catch(next);
-};
-
-const logout = (req, res) => {
-  res.clearCookie('jwt', { httpOnly: true, sameSite: 'none', secure: true }).send({ message: LOGOUT_MESSAGE });
-};
-
-// Функция, которая обновляет данные пользователя
-const updateUserData = (req, res, next) => {
-  const { _id: userId } = req.user;
-  const { email, name } = req.body;
-
-  // обновим имя найденного по _id пользователя
-  User.findByIdAndUpdate(
-    userId,
-    { email, name }, // Передадим объект опций:
-    {
-      new: true, // обработчик then получит на вход обновлённую запись
-      runValidators: true, // данные будут валидированы перед изменением
-    },
-  )
     .then((user) => {
       if (!user) {
-        throw new NotFoundError(USER_NOT_FOUND_ERROR_MESSAGE);
+        throw new NotFound('user not found');
+      } else {
+        res.send({ user });
       }
-      res.send(user);
     })
     .catch((err) => {
-      if (err.code === 11000) {
-        next(new ConflictError(CONFLICT_ERROR_MESSAGE));
-        return;
-      }
-      if (err instanceof ValidationError) {
-        const errorMessage = Object.values(err.errors)
-          .map((error) => error.message)
-          .join(', ');
-        next(new BadRequestError(`${VALIDATION_ERROR_MESSAGE} ${errorMessage}`));
-        return;
-      }
-      if (err instanceof CastError) {
-        next(new BadRequestError(CAST_INCORRECT_USERID_ERROR_MESSAGE));
+      if (err.name === 'CastError') {
+        next(new IncorrectValue('incorrect value'));
       } else {
         next(err);
       }
     });
 };
+const createUser = (req, res, next) => {
+  const { email, password, name } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      email,
+      password: hash,
+      name,
+    }))
+    .then((user) => res.status(STATUS_CREATED_201).send({
+      name: user.name,
+      email: user.email,
+      _id: user._id,
+    }))
+    .catch((err) => {
+      if (err.code === 11000) {
+        next(new Conflict('user already exists'));
+        return;
+      }
+      if (err.name === 'ValidationError') {
+        next(new IncorrectValue('incorrect value'));
+      } else {
+        next(err);
+      }
+    });
+};
+const loginUser = (req, res, next) => {
+  const { email, password } = req.body;
 
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: '7d',
+      });
+      res.send({ token });
+    })
+    .catch(next);
+};
+const updateUser = (req, res, next) => {
+  const { name, email, password } = req.body;
+  const { _id: userId } = req.user;
+  bcrypt.hash(password, 10)
+    .then((hash) => User.findByIdAndUpdate(
+      userId,
+      { email, password: hash, name },
+      { new: true, runValidators: true },
+    ))
+    .then((user) => res.status(STATUS_CREATED_201).send({
+      name: user.name,
+      email: user.email,
+      _id: user._id,
+    }))
+    .catch((err) => {
+      if (err.name === 'DocumentNotFoundError') {
+        next(new NotFound('user not found'));
+        return;
+      }
+      if (err.name === 'ValidationError') {
+        next(new IncorrectValue('incorrect value'));
+      } else {
+        next(err);
+      }
+    });
+};
 module.exports = {
-  getCurrentUserInfo,
+  getUserID,
   createUser,
-  login,
-  logout,
-  updateUserData,
+  loginUser,
+  updateUser,
 };

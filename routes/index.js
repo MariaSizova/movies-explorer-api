@@ -1,30 +1,23 @@
-// Импорт роутеров
-const router = require('express').Router();
-const users = require('./users');
-const movies = require('./movies');
+const routes = require('express').Router();
 
-// Импорт миддлвэра для авторизации
-const auth = require('../middlewares/auth');
+const { notFoundPageRoute } = require('./notFoundPage');
+const { crashTestPageRoute } = require('./crashTest');
+const { registerUserRoute } = require('./registerUser');
+const { loginUserRoute } = require('./loginUser');
+const { userRoutes } = require('./users');
+const { moviesRoutes } = require('./movies');
+const { auth } = require('../middlewares/auth');
 
-// Импорт кастомного класса ошибок NotFoundError
-const NotFoundError = require('../errors/NotFoundError');
+routes.use(crashTestPageRoute);
 
-// Импорт контроллеров и валидаторов
-const { createUser, login, logout } = require('../controllers/users');
-const { createUserValidator, loginValidator } = require('../middlewares/validators/userValidator');
+routes.use(registerUserRoute);
+routes.use(loginUserRoute);
 
-// роуты, не требующие авторизации - регистрация и логин
-router.post('/signup', createUserValidator, createUser); // добавили роутер для регистрации
-router.post('/signin', loginValidator, login); // добавили роутеры для авторизации
+routes.use(auth);
 
-// роуты, которым авторизация нужна - users и movies
-router.use('/users', auth, users); // добавили роутеры для пользователей
-router.use('/movies', auth, movies); // добавили роутеры для фильмов
-router.get('/signout', auth, logout); // добавили роутер для выхода из системы (очищения куки)
+routes.use(userRoutes);
+routes.use(moviesRoutes);
 
-// роут для запросов по несуществующим URL
-router.use('*', auth, (req, res, next) => {
-  next(new NotFoundError('Ресурс не найден. Проверьте URL и метод запроса'));
-});
+routes.use(notFoundPageRoute);
 
-module.exports = router; // экспортировали этот роутер
+module.exports = { routes };

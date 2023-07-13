@@ -1,20 +1,13 @@
-// Импорт роутера
-const router = require('express').Router();
+const userRoutes = require('express').Router();
 
-// Импорт контроллеров
 const {
-  getCurrentUserInfo,
-  updateUserData,
+  getUserID,
+  updateUser,
 } = require('../controllers/users');
+const { updateUserValidation } = require('../utils/validationJoi/userValidation');
 
-// Импорт валидаторов
-const {
-  userDataValidator,
-} = require('../middlewares/validators/userValidator');
+userRoutes.get('/users/me', getUserID);
 
-// Роутеры
-router.get('/me', getCurrentUserInfo);
+userRoutes.patch('/users/me', updateUserValidation, updateUser);
 
-router.patch('/me', userDataValidator, updateUserData);
-
-module.exports = router;
+module.exports = { userRoutes };

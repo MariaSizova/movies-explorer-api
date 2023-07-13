@@ -1,32 +1,27 @@
-// Импорт модуля jsonwebtoken
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const { NoAuthorizedError } = require('../utils/errors/NoAuthorized401');
 
-// Импорт переменной секретного ключа
-const { NODE_ENV, JWT_SECRET, JWT_SECRET_DEV } = require('../utils/config');
+const { JWT_SECRET = 'some-secret-key' } = process.env;
 
-const UnauthorizedError = require('../errors/UnauthorizedError');
-
-const { UNAUTHORIZED_ERROR_MESSAGE } = require('../utils/constants');
-
-module.exports = (req, res, next) => {
-  // извлечём токен и сохраняем его в переменную
-  const token = req.cookies.jwt;
-
-  // убеждаемся, что он есть
-  if (!token) {
-    return next(new UnauthorizedError(UNAUTHORIZED_ERROR_MESSAGE));
+const auth = (req, res, next) => {
+  const { authorization } = req.headers;
+  if (!authorization || !authorization.startsWith('Bearer ')) {
+    return next(new NoAuthorizedError('Authorization required'));
   }
 
+  const token = authorization.replace('Bearer ', '');
   let payload;
 
   try {
-    // попытаемся верифицировать токен
-    payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : JWT_SECRET_DEV);
+    payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
-    // отправим ошибку, если не получилось
-    return next(new UnauthorizedError(UNAUTHORIZED_ERROR_MESSAGE));
+    return next(new NoAuthorizedError('Authorization required !'));
   }
-  req.user = payload; // записываем пейлоуд в объект запроса
 
-  return next(); // пропускаем запрос дальше
+  req.user = payload;
+
+  return next();
 };
+
+module.exports = { auth };

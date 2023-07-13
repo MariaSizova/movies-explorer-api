@@ -1,84 +1,73 @@
-// Импорт пакетов
 const mongoose = require('mongoose');
 
-// Импорт валидатора URL
-const isUrl = require('validator/lib/isURL');
+const { Schema } = mongoose;
 
-const movieSchema = new mongoose.Schema(
+const MovieSchema = new Schema(
   {
     country: {
       type: String,
-      required: [true, 'не передана страна создания фильма'],
+      required: true,
     },
     director: {
       type: String,
-      required: [true, 'не передан режиссёр фильма'],
+      required: true,
     },
     duration: {
       type: Number,
-      required: [true, 'не передана длительность фильма'],
+      required: true,
     },
     year: {
       type: String,
-      required: [true, 'не передан год создания фильма'],
+      required: true,
     },
     description: {
       type: String,
-      required: [true, 'не передано описание фильма'],
+      required: true,
     },
     image: {
       type: String,
-      required: [true, 'не передана ссылка на постер фильма'],
+      required: true,
       validate: {
-        // validator - функция проверки данных. v - значение свойства e-mail
-        // если url не соответствует формату, вернётся false
-        validator: (url) => isUrl(url, { protocols: ['http', 'https'], require_protocol: true }),
-        // когда validator вернёт false, будет использовано это сообщение
-        message: 'некорректный формат ссылки на постер к фильму',
+        validator: (url) => /https?:\/\/(?:[-\w]+\.)?([-\w]+)\.\w+(?:\.\w+)?\/?.*/i.test(url),
+        message: 'enter url image',
       },
     },
     trailerLink: {
       type: String,
-      required: [true, 'не передана ссылка на трейлер фильма'],
+      required: true,
       validate: {
-        // validator - функция проверки данных. v - значение свойства e-mail
-        // если url не соответствует формату, вернётся false
-        validator: (url) => isUrl(url, { protocols: ['http', 'https'], require_protocol: true }),
-        // тогда validator вернёт false, будет использовано это сообщение
-        message: 'некорректный формат ссылки на трейлер фильма',
+        validator: (url) => /https?:\/\/(?:[-\w]+\.)?([-\w]+)\.\w+(?:\.\w+)?\/?.*/i.test(url),
+        message: 'enter url image',
       },
     },
     thumbnail: {
       type: String,
-      required: [true, 'не передана ссылка на миниатюрное изображение постера к фильму'],
+      required: true,
       validate: {
-        // validator - функция проверки данных. v - значение свойства e-mail
-        // если url не соответствует формату, вернётся false
-        validator: (url) => isUrl(url, { protocols: ['http', 'https'], require_protocol: true }),
-        // когда validator вернёт false, будет использовано это сообщение
-        message: 'некорректный формат ссылки на миниатюрное изображение постера к фильму',
+        validator: (url) => /https?:\/\/(?:[-\w]+\.)?([-\w]+)\.\w+(?:\.\w+)?\/?.*/i.test(url),
+        message: 'enter url image',
       },
     },
     owner: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'user',
-      required: [true, 'не передан _id пользователя, который сохранил фильм'],
+      type: Schema.Types.ObjectId,
+      required: true,
     },
     movieId: {
       type: Number,
-      required: [true, 'не передан id фильма'],
+      required: true,
     },
     nameRU: {
       type: String,
-      required: [true, 'не передано название фильма на русском языке'],
+      required: true,
     },
     nameEN: {
       type: String,
-      required: [true, 'не передано название фильма на английском языке'],
+      required: true,
     },
   },
-  { versionKey: false },
+  {
+    versionKey: false,
+  },
 );
 
-// создаём модель и экспортируем её
-module.exports = mongoose.model('movie', movieSchema);
+module.exports = mongoose.model('movie', MovieSchema);

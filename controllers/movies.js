@@ -1,51 +1,24 @@
-// Импорт классов ошибок из mongoose.Error
-const { CastError, ValidationError } = require('mongoose').Error;
-
-// Импорт классов ошибок из конструкторов ошибок
-const NotFoundError = require('../errors/NotFoundError');
-const BadRequestError = require('../errors/BadRequestError');
-const ForbiddenError = require('../errors/ForbiddenError');
-
-// Импорт модели movie
-const Movie = require('../models/movie');
-
-// Импорт статус-кодов ошибок
-const {
-  CREATED_201,
-  VALIDATION_ERROR_MESSAGE,
-  FILM_NOT_FOUND_ERROR_MESSAGE,
-  FORBIDDEN_ERROR_MESSAGE,
-  DELETE_MOVIE_MESSAGE,
-  CAST_INCORRECT_MOVIEID_ERROR_MESSAGE,
-} = require('../utils/constants');
-
-// Функция, которая возвращает все сохранённые текущим  пользователем фильмы
-const getMovies = (req, res, next) => {
+const Forbidden = require('../utils/errors/Forbidden403');
+const NotFound = require('../utils/errors/NotFound404');
+const Movie = require('../models/Movie');
+const { STATUS_CREATED_201 } = require('../utils/constants');
+const IncorrectValue = require('../utils/errors/IncorrectValue400');
+// как в брифе: 'возвращает все сохранённые текущим  пользователем фильмы'
+const getMyMovies = (req, res, next) => {
   const { _id: userId } = req.user;
-
-  Movie.find({ owner: userId })
-    .populate(['owner'])
-    .then((movies) => res.send(movies))
-    .catch(next);
+  Movie.find({ owner: userId }).then((movie) => {
+    res.send({ movie });
+  })
+    .catch((err) => {
+      next(err);
+    });
 };
-
-// Функция, которая создаёт фильм
 const createMovie = (req, res, next) => {
   const {
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailerLink,
-    nameRU,
-    nameEN,
-    thumbnail,
-    movieId,
+    country, director, duration, year, description, image,
+    trailerLink, thumbnail, movieId, nameRU, nameEN,
   } = req.body;
   const { _id: userId } = req.user;
-
   Movie.create({
     country,
     director,
@@ -54,55 +27,45 @@ const createMovie = (req, res, next) => {
     description,
     image,
     trailerLink,
-    nameRU,
-    nameEN,
     thumbnail,
     movieId,
+    nameRU,
+    nameEN,
     owner: userId,
   })
-    .then((movie) => movie.populate('owner'))
-    // вернём записанные в базу данные
-    .then((movie) => res.status(CREATED_201).send(movie))
-    // данные не записались, вернём ошибку
+    .then((movie) => { res.status(STATUS_CREATED_201).send({ data: movie }); })
     .catch((err) => {
-      if (err instanceof ValidationError) {
-        const errorMessage = Object.values(err.errors)
-          .map((error) => error.message)
-          .join(', ');
-        next(new BadRequestError(`${VALIDATION_ERROR_MESSAGE} ${errorMessage}`));
+      if (err.name === 'ValidationError') {
+        next(new IncorrectValue('incorrect value'));
       } else {
         next(err);
       }
     });
 };
-
-// Функция, которая удаляет карточку по идентификатору
-const deleteMovieById = (req, res, next) => {
-  const { _id: movieId } = req.params;
-  const { _id: userId } = req.user;
-
+const deleteMovie = (req, res, next) => {
+  const movieId = req.params;
+  const userId = req.user._id;
   Movie.findById(movieId)
     .then((movie) => {
       if (!movie) {
-        throw new NotFoundError(FILM_NOT_FOUND_ERROR_MESSAGE);
+        next(new NotFound('object not found'));
+      } else if (userId !== movie.owner.toString()) {
+        next(new Forbidden('you do not have the rights to delete this object'));
+      } else {
+        Movie.deleteOne({ _id: movieId })
+          .then(() => res.send({ message: 'successful deletion' }))
+          .catch((err) => {
+            next(err);
+          });
       }
-      if (userId !== movie.owner.toString()) {
-        throw new ForbiddenError(FORBIDDEN_ERROR_MESSAGE);
-      }
-      return Movie.findByIdAndRemove(movieId)
-        .then(() => res.send({ message: DELETE_MOVIE_MESSAGE }));
     })
     .catch((err) => {
-      if (err instanceof CastError) {
-        next(new BadRequestError(CAST_INCORRECT_MOVIEID_ERROR_MESSAGE));
-      } else {
-        next(err);
-      }
+      next(err);
     });
 };
 
 module.exports = {
-  getMovies,
+  getMyMovies,
   createMovie,
-  deleteMovieById,
+  deleteMovie,
 };
