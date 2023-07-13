@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ShkundinMihail/movies-explorer-api"
+    "url": "git+https://github.com/MariaSizova/movies-explorer-api.git"
   },
   "keywords": [],
-  "author": "Shkundin Mihail",
+  "author": "Mary Vasileva",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ShkundinMihail/movies-explorer-api/issues"
+    "url": "https://github.com/MariaSizova/movies-explorer-api/issues"
   },
-  "homepage": "https://github.com/ShkundinMihail/movies-explorer-api/blob/main/README.md",
+  "homepage": "https://github.com/MariaSizova/movies-explorer-api#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
     "celebrate": "^15.0.1",
