@@ -25,6 +25,8 @@ const ALLOWED_CORS = [
   'https://api.nomoreparties.co/beatfilm-movies',
   'https://localhost:3000',
   'http://localhost:3000',
+  'http://localhost:3001',
+  'https://localhost:3001',
   'http://158.160.107.188',
   'https://158.160.107.188',
 ];
