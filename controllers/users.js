@@ -5,7 +5,6 @@ const User = require('../models/User');
 const IncorrectValue = require('../utils/errors/IncorrectValue400');
 const Conflict = require('../utils/errors/Conflict409');
 const NotFound = require('../utils/errors/NotFound404');
-const NoAuthorizedError = require('../utils/errors/NoAuthorized401');
 const { STATUS_CREATED_201 } = require('../utils/constants');
 
 const { JWT_SECRET = 'some-secret-key' } = process.env;
