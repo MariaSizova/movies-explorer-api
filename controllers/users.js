@@ -63,9 +63,7 @@ const loginUser = (req, res, next) => {
       });
       res.send({ token });
     })
-    .catch(() => {
-      next(new NoAuthorizedError('Неправильные почта или пароль'));
-    });
+    .catch(next);
 };
 const updateUser = (req, res, next) => {
   const { name, email, password } = req.body;
