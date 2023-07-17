@@ -65,14 +65,13 @@ const loginUser = (req, res, next) => {
     .catch(next);
 };
 const updateUser = (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { name, email } = req.body;
   const { _id: userId } = req.user;
-  bcrypt.hash(password, 10)
-    .then((hash) => User.findByIdAndUpdate(
+  User.findByIdAndUpdate(
       userId,
-      { email, password: hash, name },
+      { email, name },
       { new: true, runValidators: true },
-    ))
+    )
     .then((user) => res.status(STATUS_CREATED_201).send({
       name: user.name,
       email: user.email,
