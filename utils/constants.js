@@ -7,11 +7,11 @@ const STATUS_CONFLICT_409 = 409;
 const STATUS_ERROR_SERVER_500 = 500;
 
 const corsOptions = [
-  'https://localhost:3000',
-  'https://api.diplom.marisizova.nomoredomains.rocks',
-  'http://api.diplom.marisizova.nomoredomains.rocks',
-  'https://diplom.marisizova.nomoredomains.rocks',
-  'http://diplom.marisizova.nomoredomains.rocks',
+  //'https://localhost:3000',
+ //'https://api.diplom.marisizova.nomoredomains.rocks',
+  //'http://api.diplom.marisizova.nomoredomains.rocks',
+  //'https://diplom.marisizova.nomoredomains.rocks',
+  //'http://diplom.marisizova.nomoredomains.rocks',
   'http://localhost:3000',
   'http://localhost:3001',
   'http://localhost:3002',
