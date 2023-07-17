@@ -70,7 +70,7 @@ const updateUser = (req, res, next) => {
   User.findByIdAndUpdate(
       userId,
       { email, name },
-      { runValidators: true },
+      { new: true, runValidators: true },
     )
     .then((user) => res.status(STATUS_CREATED_201).send({
       name: user.name,

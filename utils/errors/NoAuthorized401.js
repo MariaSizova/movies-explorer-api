@@ -7,4 +7,4 @@ class NoAuthorizedError extends Error {
   }
 }
 
-module.exports = NoAuthorizedError;
+module.exports = { NoAuthorizedError };
