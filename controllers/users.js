@@ -72,12 +72,11 @@ const updateUser = (req, res, next) => {
       { email, name },
       { new: true, runValidators: true },
     )
-    .then((user) => {
-      if (!user) {
-        throw new NotFound('Пользователь по указанному id не найден');
-      }
-      res.send({ user });
-    })
+    .then((user) => res.status(STATUS_CREATED_201).send({
+      name: user.name,
+      email: user.email,
+      _id: user._id,
+    }))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
         next(new NotFound('user not found'));
