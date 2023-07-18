@@ -72,7 +72,7 @@ const updateUser = (req, res, next) => {
       { email, name },
       { new: true, runValidators: true },
     )
-    .then((user) => res.send({
+    .then((user) => res.status(STATUS_CREATED_201).send({
       name: user.name,
       email: user.email,
       _id: user._id,
